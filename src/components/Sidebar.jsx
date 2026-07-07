@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  RiDashboardLine, RiTaskLine, RiCalendarLine, RiBarChartLine,
+  RiDashboardLine, RiTaskLine, RiCompass3Line, RiBarChartLine,
   RiTimerLine, RiUserLine, RiSettings4Line, RiMenuLine,
   RiCloseLine, RiMoonLine, RiSunLine, RiLogoutBoxLine,
-  RiAwardLine, RiCodeSSlashLine,
+  RiAwardLine, RiCodeSSlashLine, RiFileList3Line,
 } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 import { useTask } from '../context/TaskContext';
@@ -13,11 +13,11 @@ import { useTask } from '../context/TaskContext';
 const NAV_ITEMS = [
   { to: '/dashboard',    icon: RiDashboardLine,  label: 'Dashboard'    },
   { to: '/tasks',        icon: RiTaskLine,       label: 'Tasks'        },
-  { to: '/calendar',     icon: RiCalendarLine,   label: 'Calendar'     },
+  { to: '/roadmap',      icon: RiCompass3Line,   label: 'Roadmap AI'   },
   { to: '/analytics',    icon: RiBarChartLine,   label: 'Analytics'    },
-  { to: '/pomodoro',     icon: RiTimerLine,       label: 'Pomodoro'     },
   { to: '/certificates', icon: RiAwardLine,     label: 'Certificates' },
   { to: '/platforms',    icon: RiCodeSSlashLine, label: 'Platforms'    },
+  { to: '/programming-sheet', icon: RiFileList3Line, label: 'Prog. Sheet'  },
   { to: '/profile',      icon: RiUserLine,        label: 'Profile'      },
   { to: '/settings',     icon: RiSettings4Line,   label: 'Settings'     },
 ];

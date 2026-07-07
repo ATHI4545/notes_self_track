@@ -38,6 +38,8 @@ const DEFAULT_EXTENDED = {
   course:          '',
   dob:             '',
   leetcodeUsername: '',
+  githubUsername:   '',
+  linkedinUrl:      '',
 };
 
 export function AuthProvider({ children }) {
@@ -74,6 +76,8 @@ export function AuthProvider({ children }) {
           course:          data.course          || '',
           dob:             data.dob             || '',
           leetcodeUsername: data.leetcodeUsername || '',
+          githubUsername:   data.githubUsername   || '',
+          linkedinUrl:      data.linkedinUrl      || '',
         });
       }
     } catch (err) {
@@ -97,6 +101,8 @@ export function AuthProvider({ children }) {
         course:          extProfile.course,
         dob:             extProfile.dob,
         leetcodeUsername: extProfile.leetcodeUsername,
+        githubUsername:   extProfile.githubUsername,
+        linkedinUrl:      extProfile.linkedinUrl,
       }
     : {
         name: '', email: '', avatar: '🧑‍💻', uid: null, joinedDate: null,
@@ -196,7 +202,7 @@ export function AuthProvider({ children }) {
 
     // 2. Write extended fields to Firestore
     const firestorePatch = {};
-    const extFields = ['profileImageUrl', 'resumeUrl', 'portfolioUrl', 'cgpa', 'course', 'dob', 'leetcodeUsername'];
+    const extFields = ['profileImageUrl', 'resumeUrl', 'portfolioUrl', 'cgpa', 'course', 'dob', 'leetcodeUsername', 'githubUsername', 'linkedinUrl'];
     extFields.forEach(key => {
       if (updates[key] !== undefined) {
         firestorePatch[key] = updates[key]; // base64 compressed images are allowed (~20-50 KB)

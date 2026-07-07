@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 const BASE = 'https://alfa-leetcode-api.onrender.com';
 
 async function fetchProfile(username) {
-  const res = await fetch(`${BASE}/userProfile/${username}`);
+  const res = await fetch(`${BASE}/userProfile/${encodeURIComponent(username)}`);
   if (!res.ok) throw new Error(`Network error: ${res.status}`);
   const json = await res.json();
   if (json.errors) throw new Error(json.errors[0]?.message || 'User not found');
@@ -20,7 +20,7 @@ async function fetchProfile(username) {
 
 async function fetchBadges(username) {
   try {
-    const res = await fetch(`${BASE}/${username}/badges`);
+    const res = await fetch(`${BASE}/${encodeURIComponent(username)}/badges`);
     if (!res.ok) return { badges: [] };
     return await res.json();
   } catch {
@@ -30,7 +30,7 @@ async function fetchBadges(username) {
 
 async function fetchCalendar(username) {
   try {
-    const res = await fetch(`${BASE}/${username}/userCalendar`);
+    const res = await fetch(`${BASE}/${encodeURIComponent(username)}/userCalendar`);
     if (!res.ok) return null;
     return await res.json();
   } catch {
@@ -194,27 +194,49 @@ export default function CodingStats() {
         gap: '1.25rem',
       }}
     >
-      {/* Header */}
+      {/* Header — profile photo + name + LeetCode username */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{
-            width: '32px', height: '32px', borderRadius: '8px',
-            background: 'linear-gradient(135deg, #ffa116 0%, #ff7a00 100%)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontWeight: '800', fontSize: '1rem'
-          }}>
-            L
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+
+          {/* Profile photo / avatar */}
+          {profile.profileImageUrl ? (
+            <img
+              src={profile.profileImageUrl}
+              alt={profile.name}
+              style={{
+                width: '52px', height: '52px', borderRadius: '50%',
+                objectFit: 'cover',
+                border: '2px solid #ffa116',
+                flexShrink: 0,
+              }}
+            />
+          ) : (
+            <div style={{
+              width: '52px', height: '52px', borderRadius: '50%',
+              background: 'linear-gradient(135deg, #ffa116 0%, #ff7a00 100%)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1.6rem', flexShrink: 0,
+              border: '2px solid rgba(255,161,22,0.4)',
+            }}>
+              {profile.avatar && profile.avatar.length <= 4 ? profile.avatar : '🧑‍💻'}
+            </div>
+          )}
+
+          {/* Name + meta */}
           <div>
-            <h3 style={{ fontSize: '0.95rem', fontWeight: '750', margin: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              LeetCode Stats
-              <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: '500' }}>({username})</span>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: '800', margin: 0, letterSpacing: '-0.01em', color: 'inherit' }}>
+              {profile.name || username}
             </h3>
-            <p style={{ fontSize: '0.72rem', color: '#94a3b8', margin: 0 }}>
-              Global Ranking: {typeof ranking === 'number' ? ranking.toLocaleString() : ranking}
+            <p style={{ fontSize: '0.75rem', color: '#ffa116', fontWeight: '600', margin: '0.1rem 0 0' }}>
+              @{username}
+            </p>
+            <p style={{ fontSize: '0.7rem', color: '#94a3b8', margin: '0.1rem 0 0' }}>
+              Global Rank: {typeof ranking === 'number' ? ranking.toLocaleString() : ranking}
             </p>
           </div>
         </div>
+
+        {/* Refresh button */}
         <button
           onClick={() => setRefreshKey(k => k + 1)}
           style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', fontSize: '1.1rem', display: 'flex', padding: '0.25rem', borderRadius: '0.375rem', transition: 'all 0.2s' }}
@@ -238,72 +260,96 @@ export default function CodingStats() {
             </span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
             {/* Easy */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: '600' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: '600' }}>
                 <span style={{ color: '#00b8a3' }}>Easy</span>
                 <span>{solved.easy} / {solved.totalEasy || 800}</span>
               </div>
-              <div style={{ height: '6px', borderRadius: '3px', background: 'rgba(0, 184, 163, 0.1)', overflow: 'hidden' }}>
-                <div style={{ width: `${Math.min((solved.easy / (solved.totalEasy || 800)) * 100, 100)}%`, height: '100%', background: '#00b8a3', borderRadius: '3px', transition: 'width 0.6s ease' }} />
+              <div style={{ height: '8px', borderRadius: '4px', background: 'rgba(0, 184, 163, 0.12)', overflow: 'hidden' }}>
+                <div style={{ width: `${Math.min((solved.easy / (solved.totalEasy || 800)) * 100, 100)}%`, height: '100%', background: 'linear-gradient(90deg,#00b8a3,#00d4be)', borderRadius: '4px', transition: 'width 0.8s ease' }} />
               </div>
             </div>
 
             {/* Medium */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: '600' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: '600' }}>
                 <span style={{ color: '#ffc01e' }}>Medium</span>
                 <span>{solved.medium} / {solved.totalMedium || 1600}</span>
               </div>
-              <div style={{ height: '6px', borderRadius: '3px', background: 'rgba(255, 192, 30, 0.1)', overflow: 'hidden' }}>
-                <div style={{ width: `${Math.min((solved.medium / (solved.totalMedium || 1600)) * 100, 100)}%`, height: '100%', background: '#ffc01e', borderRadius: '3px', transition: 'width 0.6s ease' }} />
+              <div style={{ height: '8px', borderRadius: '4px', background: 'rgba(255, 192, 30, 0.12)', overflow: 'hidden' }}>
+                <div style={{ width: `${Math.min((solved.medium / (solved.totalMedium || 1600)) * 100, 100)}%`, height: '100%', background: 'linear-gradient(90deg,#ffc01e,#ffd84d)', borderRadius: '4px', transition: 'width 0.8s ease' }} />
               </div>
             </div>
 
             {/* Hard */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: '600' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: '600' }}>
                 <span style={{ color: '#ef4743' }}>Hard</span>
                 <span>{solved.hard} / {solved.totalHard || 700}</span>
               </div>
-              <div style={{ height: '6px', borderRadius: '3px', background: 'rgba(239, 71, 67, 0.1)', overflow: 'hidden' }}>
-                <div style={{ width: `${Math.min((solved.hard / (solved.totalHard || 700)) * 100, 100)}%`, height: '100%', background: '#ef4743', borderRadius: '3px', transition: 'width 0.6s ease' }} />
+              <div style={{ height: '8px', borderRadius: '4px', background: 'rgba(239, 71, 67, 0.12)', overflow: 'hidden' }}>
+                <div style={{ width: `${Math.min((solved.hard / (solved.totalHard || 700)) * 100, 100)}%`, height: '100%', background: 'linear-gradient(90deg,#ef4743,#ff6b68)', borderRadius: '4px', transition: 'width 0.8s ease' }} />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Badges */}
-        <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'center', borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+        {/* Badges — full grid showing ALL badges at proper size */}
+        <div className="leetcode-badges-col" style={{ borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: '1rem' }}>
+          <p style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: '750', textTransform: 'uppercase', margin: '0 0 0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <RiAwardLine style={{ color: '#10b981', fontSize: '1rem' }} />
+            BADGES
+            <span style={{ color: '#10b981', fontWeight: '800', fontSize: '0.85rem' }}>({badges.length})</span>
+          </p>
+          {badges.length === 0 ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#94a3b8', padding: '0.5rem 0' }}>
+              <span style={{ fontSize: '0.82rem' }}>No badges yet — keep solving!</span>
+            </div>
+          ) : (
             <div style={{
-              width: '42px', height: '42px', borderRadius: '10px',
-              background: 'rgba(16, 185, 129, 0.08)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexShrink: 0
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(52px, 1fr))',
+              gap: '0.625rem',
             }}>
-              <RiAwardLine style={{ color: '#10b981', fontSize: '1.3rem' }} />
+              {badges.map((badge, idx) => (
+                <div
+                  key={badge.id || idx}
+                  title={badge.displayName || badge.name}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    aspectRatio: '1',
+                    borderRadius: '10px',
+                    background: 'rgba(16, 185, 129, 0.06)',
+                    border: '1px solid rgba(16, 185, 129, 0.15)',
+                    transition: 'transform 0.15s, box-shadow 0.15s, background 0.15s',
+                    cursor: 'default',
+                    padding: '6px',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = 'scale(1.14)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(16,185,129,0.25)';
+                    e.currentTarget.style.background = 'rgba(16,185,129,0.12)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.background = 'rgba(16,185,129,0.06)';
+                  }}
+                >
+                  <img
+                    src={badge.icon?.startsWith('http') ? badge.icon : `https://leetcode.com${badge.icon}`}
+                    alt={badge.displayName || badge.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    onError={e => { e.target.parentElement.style.display = 'none'; }}
+                  />
+                </div>
+              ))}
             </div>
-            <div style={{ minWidth: 0 }}>
-              <p style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: '750', textTransform: 'uppercase', margin: 0 }}>BADGES</p>
-              <p style={{ fontSize: '1.15rem', fontWeight: '855', margin: 0, color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                {badges.length}
-                <span style={{ display: 'inline-flex', gap: '0.2rem', marginLeft: '0.2rem' }}>
-                  {badges.slice(0, 3).map((badge, idx) => (
-                    <img
-                      key={badge.id || idx}
-                      src={badge.icon?.startsWith('http') ? badge.icon : `https://leetcode.com${badge.icon}`}
-                      alt={badge.displayName || badge.name}
-                      title={badge.displayName || badge.name}
-                      style={{ width: '18px', height: '18px', objectFit: 'contain' }}
-                      onError={(e) => { e.target.style.display = 'none'; }}
-                    />
-                  ))}
-                </span>
-              </p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 

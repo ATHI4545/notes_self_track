@@ -8,7 +8,16 @@ export default function ProgressBar({ completed, total, streak }) {
   const remaining = total - completed;
 
   return (
-    <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div style={{
+      padding: '2rem',
+      display: 'flex', flexDirection: 'column', gap: '1.5rem',
+      background: 'rgba(255,255,255,0.05)',
+      backdropFilter: 'blur(14px)',
+      WebkitBackdropFilter: 'blur(14px)',
+      border: '1px solid rgba(255,255,255,0.1)',
+      borderTop: '2px solid rgba(99,102,241,0.6)',
+      boxShadow: '0 4px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)',
+    }}>
       {/* Top row */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
@@ -22,9 +31,11 @@ export default function ProgressBar({ completed, total, streak }) {
         {/* Streak badge */}
         <div style={{
           display: 'flex', alignItems: 'center', gap: '0.5rem',
-          padding: '0.6rem 1.25rem', borderRadius: '999px',
-          background: 'linear-gradient(135deg, rgba(251,146,60,0.2) 0%, rgba(239,68,68,0.15) 100%)',
-          border: '1px solid rgba(251,146,60,0.3)',
+          padding: '0.6rem 1.25rem',
+          background: 'linear-gradient(135deg, rgba(251,146,60,0.18) 0%, rgba(239,68,68,0.12) 100%)',
+          border: '1px solid rgba(251,146,60,0.35)',
+          borderRadius: 0,
+          boxShadow: '3px 3px 0 0 rgba(251,146,60,0.2)',
         }}>
           <RiFireLine style={{ color: '#fb923c', fontSize: '1.3rem' }} />
           <div>
@@ -76,7 +87,8 @@ export default function ProgressBar({ completed, total, streak }) {
               <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: '600' }}>Completion</span>
               <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#6366f1' }}>{pct}%</span>
             </div>
-            <div style={{ height: '10px', borderRadius: '999px', background: 'rgba(99,102,241,0.1)', overflow: 'hidden' }}>
+            <div style={{ height: '10px', background: 'rgba(99,102,241,0.12)', overflow: 'hidden', borderRadius: 0 }}
+            >
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${pct}%` }}
@@ -95,8 +107,11 @@ export default function ProgressBar({ completed, total, streak }) {
           <div style={{ display: 'flex', gap: '1rem' }}>
             <div style={{
               flex: 1, display: 'flex', alignItems: 'center', gap: '0.5rem',
-              padding: '0.75rem', borderRadius: '0.875rem',
-              background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)',
+              padding: '0.75rem',
+              background: 'rgba(16,185,129,0.1)',
+              border: '1px solid rgba(16,185,129,0.25)',
+              borderRadius: 0,
+              borderLeft: '3px solid #10b981',
             }}>
               <RiCheckboxCircleLine style={{ color: '#10b981', fontSize: '1.3rem', flexShrink: 0 }} />
               <div>
@@ -106,8 +121,11 @@ export default function ProgressBar({ completed, total, streak }) {
             </div>
             <div style={{
               flex: 1, display: 'flex', alignItems: 'center', gap: '0.5rem',
-              padding: '0.75rem', borderRadius: '0.875rem',
-              background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.15)',
+              padding: '0.75rem',
+              background: 'rgba(245,158,11,0.1)',
+              border: '1px solid rgba(245,158,11,0.25)',
+              borderRadius: 0,
+              borderLeft: '3px solid #f59e0b',
             }}>
               <RiTimerLine style={{ color: '#f59e0b', fontSize: '1.3rem', flexShrink: 0 }} />
               <div>

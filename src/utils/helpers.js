@@ -1,4 +1,6 @@
 import { format, isToday, isTomorrow, isPast, isAfter, parseISO, differenceInCalendarDays } from 'date-fns';
+import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { db } from '../firebase/firebaseConfig';
 
 // ── Greeting ────────────────────────────────────────────────────────────────
 export function getGreeting(name = '') {
@@ -190,4 +192,17 @@ export function getCompletedPerDay(tasks) {
       t => t.completed && t.completedAt && t.completedAt.slice(0, 10) === dateStr
     ).length;
   });
+}
+
+export async function recordStreakDay(uid) {
+  if (!uid) return;
+  try {
+    const dateOnly = new Date().toISOString().slice(0, 10);
+    const userRef = doc(db, 'users', uid);
+    await updateDoc(userRef, {
+      completedDates: arrayUnion(dateOnly)
+    });
+  } catch (err) {
+    console.error('Failed to record streak day:', err);
+  }
 }

@@ -16,6 +16,16 @@ service cloud.firestore {
       match /certificates/{certificateId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
+
+      // Roadmaps sub-collection
+      match /roadmaps/{roadmapId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Progress sub-collection
+      match /progress/{progressId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
 
     // ── Deny everything else by default ────────────────────────────────────

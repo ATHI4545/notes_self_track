@@ -71,16 +71,16 @@ export default function Tasks() {
         style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}
       >
         <div>
-          <h1 style={{ fontSize: '1.875rem', fontWeight: '800', letterSpacing: '-0.02em', color: 'inherit' }}>
+          <h1 className="tasks-page-title">
             My Tasks
           </h1>
-          <p style={{ fontSize: '0.875rem', color: '#94a3b8', marginTop: '0.2rem' }}>
+          <span className="tasks-count-badge">
             {visible.length} task{visible.length !== 1 ? 's' : ''} found
-          </p>
+          </span>
         </div>
         <button
           onClick={() => { setEditTask(null); setShowForm(true); }}
-          className="btn-primary"
+          className="btn-primary tasks-add-btn"
           id="tasks-add-btn"
         >
           <RiAddLine style={{ fontSize: '1.1rem' }} /> Add Task
@@ -108,11 +108,11 @@ export default function Tasks() {
                 {visible.length === 0 ? (
                   <motion.div
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                    className="glass-card"
+                    className="glass-card tasks-empty-card"
                     style={{ padding: '4rem 1.5rem', textAlign: 'center', color: '#94a3b8' }}
                   >
-                    <RiInboxLine style={{ fontSize: '3.5rem', marginBottom: '0.75rem', color: '#cbd5e1', display: 'block', margin: '0 auto 0.75rem' }} />
-                    <p style={{ fontWeight: '600', fontSize: '1rem' }}>No tasks found</p>
+                    <RiInboxLine style={{ fontSize: '3.5rem', marginBottom: '0.75rem', color: '#a5b4fc', display: 'block', margin: '0 auto 0.75rem' }} />
+                    <p style={{ fontWeight: '700', fontSize: '1rem', color: '#6366f1' }}>No tasks found</p>
                     <p style={{ fontSize: '0.85rem', marginTop: '0.35rem' }}>
                       {filter !== 'all' || search ? 'Try changing filters or search.' : 'Click "Add Task" to get started.'}
                     </p>
@@ -140,18 +140,12 @@ export default function Tasks() {
 
       {/* Archived section */}
       {archived.length > 0 && (
-        <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.07)' }}>
+        <div style={{ paddingTop: '1.25rem' }}>
+          <hr className="tasks-section-divider" />
           <button
             onClick={() => setShowArchived(v => !v)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '0.5rem',
-              fontSize: '0.875rem', fontWeight: '600', color: '#64748b',
-              background: 'none', border: 'none', cursor: 'pointer',
-              marginBottom: '0.75rem', padding: '0.375rem 0',
-              transition: 'color 0.15s',
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = '#6366f1'}
-            onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
+            className="archive-toggle-btn"
+            style={{ marginBottom: '0.75rem' }}
           >
             <RiArchiveLine />
             {showArchived ? 'Hide' : 'Show'} Archived Tasks ({archived.length})

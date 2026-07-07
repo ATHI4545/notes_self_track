@@ -12,13 +12,13 @@ const Login     = lazy(() => import('./pages/Login'));
 const Signup    = lazy(() => import('./pages/Signup'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Tasks     = lazy(() => import('./pages/Tasks'));
-const Calendar  = lazy(() => import('./pages/Calendar'));
+const Roadmap   = lazy(() => import('./pages/Roadmap'));
 const Analytics = lazy(() => import('./pages/Analytics'));
-const Pomodoro  = lazy(() => import('./pages/Pomodoro'));
 const Profile   = lazy(() => import('./pages/Profile'));
 const Settings  = lazy(() => import('./pages/Settings'));
 const Certificates = lazy(() => import('./pages/Certificates'));
 const Platforms = lazy(() => import('./pages/Platforms'));
+const ProgrammingSheet = lazy(() => import('./pages/ProgrammingSheet'));
 
 // ── Minimal full-screen loading fallback ──────────────────────────────────────
 function PageLoader() {
@@ -57,13 +57,13 @@ export default function App() {
               <Route element={<ProtectedLayout />}>
                 <Route path="/dashboard"  element={<Dashboard />} />
                 <Route path="/tasks"      element={<Tasks />} />
-                <Route path="/calendar"   element={<Calendar />} />
+                <Route path="/roadmap"    element={<Roadmap />} />
                 <Route path="/analytics"  element={<Analytics />} />
-                <Route path="/pomodoro"   element={<Pomodoro />} />
                 <Route path="/profile"    element={<Profile />} />
                 <Route path="/settings"   element={<Settings />} />
                 <Route path="/certificates" element={<Certificates />} />
                 <Route path="/platforms"    element={<Platforms />} />
+                <Route path="/programming-sheet" element={<ProgrammingSheet />} />
               </Route>
 
               {/* Default redirect */}

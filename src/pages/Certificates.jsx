@@ -9,6 +9,7 @@ import { db } from '../firebase/firebaseConfig';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
+import { recordStreakDay } from '../utils/helpers';
 
 // Helper to ensure external links are absolute URLs
 const ensureAbsoluteUrl = (url) => {
@@ -139,6 +140,7 @@ export default function Certificates() {
       }, { merge: true });
 
       toast.success('🎓 Certificate added successfully!');
+      recordStreakDay(uid);
       
       // Reset form
       setName('');

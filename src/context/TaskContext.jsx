@@ -6,7 +6,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { useAuth } from './AuthContext';
-import { generateId, calculateStreak } from '../utils/helpers';
+import { generateId, calculateStreak, recordStreakDay } from '../utils/helpers';
 
 const TaskContext = createContext(null);
 
@@ -139,6 +139,9 @@ export function TaskProvider({ children }) {
     try {
       const ref = await addDoc(tasksColRef, newTask);
       if (settings.notifications) toast.success('✅ Task added successfully!');
+      if (uid) {
+        recordStreakDay(uid);
+      }
       return { id: ref.id, ...newTask };
     } catch (err) {
       toast.error('Failed to add task.');

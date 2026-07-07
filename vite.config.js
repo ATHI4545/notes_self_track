@@ -7,6 +7,15 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      '/nvidia-api': {
+        target: 'https://integrate.api.nvidia.com/v1',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/nvidia-api/, ''),
+      },
+    },
+  },
   // proxy removed — now using alfa-leetcode-api (CORS-friendly public REST API)
   build: {
     chunkSizeWarningLimit: 600,
