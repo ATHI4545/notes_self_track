@@ -6,21 +6,53 @@ import { useAuth } from '../context/AuthContext';
 
 // ─── alfa-leetcode-api (CORS-friendly public REST API) ────────────────────────
 const BASE = 'https://alfa-leetcode-api.onrender.com';
+const TIMEOUT_MS = 30000; // 30s — enough for Render cold-start
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 4000;
+
+// Fetch with timeout support
+async function fetchWithTimeout(url, timeoutMs = TIMEOUT_MS) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(id);
+    return res;
+  } catch (err) {
+    clearTimeout(id);
+    if (err.name === 'AbortError') throw new Error('Request timed out. API may be warming up.');
+    throw err;
+  }
+}
+
+// Retry wrapper with exponential back-off
+async function withRetry(fn, retries = MAX_RETRIES, delayMs = RETRY_DELAY_MS) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (attempt === retries) throw err;
+      await new Promise(r => setTimeout(r, delayMs * attempt));
+    }
+  }
+}
 
 async function fetchProfile(username) {
-  const res = await fetch(`${BASE}/userProfile/${encodeURIComponent(username)}`);
-  if (!res.ok) throw new Error(`Network error: ${res.status}`);
-  const json = await res.json();
-  if (json.errors) throw new Error(json.errors[0]?.message || 'User not found');
-  if (json.totalSolved === undefined && json.totalQuestions === undefined) {
-    throw new Error('LeetCode profile not found or API is currently offline.');
-  }
-  return json;
+  return withRetry(async () => {
+    const res = await fetchWithTimeout(`${BASE}/userProfile/${encodeURIComponent(username)}`);
+    if (!res.ok) throw new Error(`Network error: ${res.status}`);
+    const json = await res.json();
+    if (json.errors) throw new Error(json.errors[0]?.message || 'User not found');
+    if (json.totalSolved === undefined && json.totalQuestions === undefined) {
+      throw new Error('LeetCode profile not found. Please check your username.');
+    }
+    return json;
+  });
 }
 
 async function fetchBadges(username) {
   try {
-    const res = await fetch(`${BASE}/${encodeURIComponent(username)}/badges`);
+    const res = await fetchWithTimeout(`${BASE}/${encodeURIComponent(username)}/badges`);
     if (!res.ok) return { badges: [] };
     return await res.json();
   } catch {
@@ -30,7 +62,7 @@ async function fetchBadges(username) {
 
 async function fetchCalendar(username) {
   try {
-    const res = await fetch(`${BASE}/${encodeURIComponent(username)}/userCalendar`);
+    const res = await fetchWithTimeout(`${BASE}/${encodeURIComponent(username)}/userCalendar`);
     if (!res.ok) return null;
     return await res.json();
   } catch {
@@ -44,6 +76,7 @@ export default function CodingStats() {
   const username = profile?.leetcodeUsername;
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [warming, setWarming] = useState(false); // true while waiting for cold-start
   const [error, setError] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -54,10 +87,17 @@ export default function CodingStats() {
     }
 
     setLoading(true);
+    setWarming(false);
     setError(null);
+
+    // Show "warming up" hint after 5s if still loading (Render cold-start)
+    const warmTimer = setTimeout(() => setWarming(true), 5000);
 
     const fetchData = async () => {
       try {
+        // Send a cheap wake-up ping first so the server starts booting
+        fetch(`${BASE}/userProfile/${encodeURIComponent(username)}`).catch(() => {});
+
         const [profileData, badgesData, calendarData] = await Promise.all([
           fetchProfile(username),
           fetchBadges(username),
@@ -87,11 +127,14 @@ export default function CodingStats() {
         console.error('LeetCode fetch error:', err);
         setError(err.message || 'Failed to fetch LeetCode data.');
       } finally {
+        clearTimeout(warmTimer);
         setLoading(false);
+        setWarming(false);
       }
     };
 
     fetchData();
+    return () => clearTimeout(warmTimer);
   }, [username, refreshKey]);
 
   // ── No username linked ────────────────────────────────────────────────────
@@ -143,12 +186,22 @@ export default function CodingStats() {
           <div style={{ height: '80px', borderRadius: '12px', background: 'rgba(0,0,0,0.03)', animation: 'pulse 1.5s infinite' }} />
           <div style={{ height: '80px', borderRadius: '12px', background: 'rgba(0,0,0,0.03)', animation: 'pulse 1.5s infinite' }} />
         </div>
+        {warming && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center', padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,161,22,0.06)', border: '1px solid rgba(255,161,22,0.15)' }}>
+            <span style={{ fontSize: '0.95rem' }}>⏳</span>
+            <p style={{ fontSize: '0.78rem', color: '#ffa116', margin: 0, fontWeight: '600' }}>
+              API waking up — this can take up to 30s on first load. Please wait…
+            </p>
+          </div>
+        )}
       </div>
     );
   }
 
   // ── Error state ───────────────────────────────────────────────────────────
   if (error) {
+    const isTimeout = error.toLowerCase().includes('timeout') || error.toLowerCase().includes('warming');
+    const isNotFound = error.toLowerCase().includes('not found') || error.toLowerCase().includes('check');
     return (
       <div
         className="glass-card"
@@ -163,11 +216,19 @@ export default function CodingStats() {
           background: 'rgba(239, 68, 68, 0.02)'
         }}
       >
-        <p style={{ fontWeight: '700', color: '#ef4444', fontSize: '0.9rem' }}>LeetCode Integration Offline</p>
-        <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
-          Unable to fetch details for <strong>{username}</strong>. Error: {error}
+        <span style={{ fontSize: '2rem' }}>{isNotFound ? '🔍' : '⏳'}</span>
+        <p style={{ fontWeight: '700', color: '#ef4444', fontSize: '0.9rem' }}>
+          {isNotFound ? 'Profile Not Found' : isTimeout ? 'API is Starting Up…' : 'LeetCode Stats Unavailable'}
         </p>
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <p style={{ fontSize: '0.8rem', color: '#94a3b8', maxWidth: '280px' }}>
+          {isNotFound
+            ? `No LeetCode profile found for "${username}". Please check the username in Settings.`
+            : isTimeout
+            ? 'The stats server was asleep. Click Retry — it usually works on the second attempt.'
+            : `Could not load stats for ${username}. The API may be temporarily down.`
+          }
+        </p>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
           <button onClick={() => setRefreshKey(k => k + 1)} className="btn-secondary" style={{ padding: '0.4rem 0.875rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
             <RiRefreshLine /> Retry
           </button>

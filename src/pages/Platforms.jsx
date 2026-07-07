@@ -16,6 +16,33 @@ import GithubRepos from '../components/GithubRepos';
 
 const ALFA_API = 'https://alfa-leetcode-api.onrender.com';
 const GITHUB_API = 'https://api.github.com';
+const PLATFORM_TIMEOUT_MS = 30000;
+
+// Fetch with timeout for platform linking
+async function platformFetch(url, timeoutMs = PLATFORM_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(id);
+    return res;
+  } catch (err) {
+    clearTimeout(id);
+    if (err.name === 'AbortError') throw new Error('Request timed out. The API is starting up — please try again in a moment.');
+    throw err;
+  }
+}
+
+async function platformFetchWithRetry(url, retries = 3, delayMs = 4000) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await platformFetch(url);
+    } catch (err) {
+      if (attempt === retries) throw err;
+      await new Promise(r => setTimeout(r, delayMs * attempt));
+    }
+  }
+}
 
 // ── LinkedIn URL → slug helper ────────────────────────────────────────────────
 function parseLinkedinUsername(raw) {
@@ -199,8 +226,9 @@ export default function Platforms() {
     setLcVerifying(true); setLcPreview(null);
     const target = leetcodeUsername.trim();
     try {
-      const res = await fetch(`${ALFA_API}/userProfile/${encodeURIComponent(target)}`);
-      if (!res.ok) throw new Error('LeetCode API offline. Please try again.');
+      toast.info('⏳ Verifying LeetCode profile…', { autoClose: false, toastId: 'lc-verify' });
+      const res = await platformFetchWithRetry(`${ALFA_API}/userProfile/${encodeURIComponent(target)}`);
+      if (!res.ok) throw new Error(`LeetCode API returned ${res.status}. Please try again.`);
       const json = await res.json();
       if (json.errors) throw new Error(json.errors[0]?.message || 'User not found.');
       if (json.totalSolved === undefined && json.totalQuestions === undefined)
@@ -209,8 +237,12 @@ export default function Platforms() {
       setLcSaving(true);
       await updateProfile({ leetcodeUsername: target });
       setActiveTab('leetcode');
+      toast.dismiss('lc-verify');
       toast.success('🔗 LeetCode linked!');
-    } catch (err) { toast.error(err.message || 'Verification failed.'); }
+    } catch (err) {
+      toast.dismiss('lc-verify');
+      toast.error(err.message || 'Verification failed.');
+    }
     finally { setLcVerifying(false); setLcSaving(false); }
   };
 
