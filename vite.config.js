@@ -9,6 +9,13 @@ export default defineConfig({
   ],
   server: {
     proxy: {
+      // Used by Roadmap.jsx in both dev and prod (Vercel function in prod)
+      '/api/nvidia-proxy': {
+        target: 'https://integrate.api.nvidia.com/v1',
+        changeOrigin: true,
+        rewrite: () => '/chat/completions',
+      },
+      // Legacy proxy (kept for compatibility)
       '/nvidia-api': {
         target: 'https://integrate.api.nvidia.com/v1',
         changeOrigin: true,
