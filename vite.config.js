@@ -17,12 +17,9 @@ export default defineConfig(({ mode }) => {
           target: 'https://integrate.api.nvidia.com/v1',
           changeOrigin: true,
           rewrite: () => '/chat/completions',
-          configure: (proxy) => {
-            proxy.on('proxyReq', (proxyReq) => {
-              const apiKey = env.VITE_NVIDIA_API_KEY || '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';
-              proxyReq.setHeader('Authorization', `Bearer ${apiKey}`);
-            });
-          },
+          headers: {
+            Authorization: `Bearer ${env.VITE_NVIDIA_API_KEY || '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'}`
+          }
         },
         // Legacy proxy (kept for compatibility)
         '/nvidia-api': {
@@ -32,12 +29,10 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    // proxy removed — now using alfa-leetcode-api (CORS-friendly public REST API)
     build: {
       chunkSizeWarningLimit: 600,
       rolldownOptions: {
         output: {
-          // rolldown requires manualChunks as a function (not an object)
           manualChunks(id) {
             if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/') || id.includes('node_modules/react-router')) {
               return 'vendor-react';
