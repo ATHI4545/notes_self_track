@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import { TaskProvider } from './context/TaskContext';
 import ProtectedLayout from './components/ProtectedLayout';
 import ChatBot from './components/ChatBot';
+import CustomCursor from './components/CustomCursor';
 
 // ── Lazy-loaded pages (each becomes its own chunk for code splitting) ─────────
 const Login     = lazy(() => import('./pages/Login'));
@@ -88,6 +89,7 @@ export default function App() {
           toastStyle={{ borderRadius: '12px', fontFamily: 'Inter, sans-serif' }}
         />
         <ChatBot />
+        <CustomCursor />
       </TaskProvider>
     </AuthProvider>
   );
