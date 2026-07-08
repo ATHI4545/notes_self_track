@@ -166,7 +166,7 @@ export default function Roadmap() {
     try {
       const apiKey = import.meta.env.VITE_NVIDIA_API_KEY || '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';
       
-      const response = await fetch('/nvidia-api/chat/completions', {
+      const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -212,7 +212,7 @@ export default function Roadmap() {
         const fallbackPrompt = `Provide a beautiful, styled markdown roadmap for learning "${activeTopic}" at a "${level}" level over "${duration}". Break it down into clear phases with bullet points.`;
         const apiKey = import.meta.env.VITE_NVIDIA_API_KEY || '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';
 
-        const responseFb = await fetch('/nvidia-api/chat/completions', {
+        const responseFb = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
