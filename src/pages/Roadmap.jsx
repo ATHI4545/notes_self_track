@@ -5,7 +5,8 @@ import {
   RiCompass3Line, RiMapPinRangeLine, RiPlayLine, RiBookOpenLine,
   RiCheckboxCircleFill, RiCheckboxBlankCircleLine, RiLoader5Line,
   RiArrowRightUpLine, RiSparklingLine, RiLightbulbLine,
-  RiFileList3Line, RiAddLine
+  RiFileList3Line, RiAddLine, RiYoutubeLine, RiAwardLine,
+  RiExternalLinkLine, RiBook2Line
 } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -132,7 +133,7 @@ export default function Roadmap() {
     
     You MUST format your output strictly as a single JSON object. Do not write any normal chat introduction, markdown explanations, or postscript dialogue. Return only the JSON object.
     
-    JSON Schema to follow:
+    JSON Schema to follow EXACTLY:
     {
       "title": "Study Roadmap: [Topic Name]",
       "overview": "[Brief description of what will be learned]",
@@ -152,12 +153,42 @@ export default function Roadmap() {
           "projects": [
             {
               "title": "[Project title]",
-              "desc": "[Brief description of what to build to practice]"
+              "desc": "[Brief description of what to build]"
             }
-          ]
+          ],
+          "resources": {
+            "certificates": [
+              {
+                "name": "[Real free course or certificate name]",
+                "platform": "[Coursera / edX / Google / freeCodeCamp / Udemy / LinkedIn Learning / IBM / Meta]",
+                "url": "[Real working URL to the free course/certificate page]"
+              }
+            ],
+            "youtube": [
+              {
+                "title": "[Real YouTube video or playlist title]",
+                "channel": "[Real YouTube channel name]",
+                "url": "[Real YouTube URL — youtube.com/watch?v=... or youtube.com/playlist?list=...]"
+              }
+            ],
+            "studyMaterials": [
+              {
+                "title": "[Resource title]",
+                "type": "[Official Docs / Book / Article / Cheatsheet / GitHub Repo / MDN / W3Schools]",
+                "url": "[Real working URL]"
+              }
+            ]
+          }
         }
       ]
-    }`;
+    }
+    
+    IMPORTANT RULES:
+    - Provide REAL, working URLs for every resource. Do NOT make up URLs.
+    - For YouTube, use real channel playlists (e.g. Traversy Media, Fireship, The Coding Train).
+    - For certificates use actual free course pages (Coursera audit, edX audit, freeCodeCamp, Google Career Certs).
+    - Every phase MUST have at least 1 certificate, 2 YouTube resources, and 2 study materials.
+    - Return ONLY the JSON object. No markdown, no extra text.`;
 
     const userMessage = `Create a detailed learning roadmap for: "${activeTopic}"
     Target difficulty level: "${level}"
@@ -523,6 +554,130 @@ export default function Roadmap() {
                         </div>
                       )}
                     </div>
+
+                    {/* ── Resources: Certificates · YouTube · Study Materials ── */}
+                    {phase.resources && (
+                      phase.resources.certificates?.length > 0 ||
+                      phase.resources.youtube?.length > 0 ||
+                      phase.resources.studyMaterials?.length > 0
+                    ) && (
+                      <div style={{ marginTop: '1.5rem', borderTop: '1px solid rgba(167,139,250,0.12)', paddingTop: '1.25rem' }}>
+                        <h4 style={{ fontSize: '0.78rem', fontWeight: '800', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.35rem', letterSpacing: '0.05em' }}>
+                          <RiArrowRightUpLine style={{ color: '#a78bfa' }} /> Learning Resources
+                        </h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
+
+                          {/* Free Certificates */}
+                          {phase.resources.certificates?.length > 0 && (
+                            <div>
+                              <div style={{ fontSize: '0.7rem', fontWeight: '800', textTransform: 'uppercase', color: '#fbbf24', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.3rem', letterSpacing: '0.05em' }}>
+                                <RiAwardLine /> Free Certificates
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                                {phase.resources.certificates.map((cert, ci) => (
+                                  <a
+                                    key={ci}
+                                    href={cert.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                      display: 'flex', alignItems: 'center', gap: '0.5rem',
+                                      padding: '0.55rem 0.8rem',
+                                      background: 'rgba(251,191,36,0.05)',
+                                      border: '1px solid rgba(251,191,36,0.18)',
+                                      textDecoration: 'none',
+                                      transition: 'all 0.15s',
+                                      borderRadius: '2px'
+                                    }}
+                                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(251,191,36,0.12)'; e.currentTarget.style.borderColor = 'rgba(251,191,36,0.35)'; }}
+                                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(251,191,36,0.05)'; e.currentTarget.style.borderColor = 'rgba(251,191,36,0.18)'; }}
+                                  >
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                      <p style={{ fontSize: '0.8rem', color: '#fbbf24', fontWeight: '700', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{cert.name}</p>
+                                      <p style={{ fontSize: '0.65rem', color: '#94a3b8', margin: '0.1rem 0 0 0', fontWeight: '600' }}>{cert.platform}</p>
+                                    </div>
+                                    <RiExternalLinkLine style={{ color: '#fbbf24', fontSize: '0.85rem', flexShrink: 0 }} />
+                                  </a>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* YouTube Resources */}
+                          {phase.resources.youtube?.length > 0 && (
+                            <div>
+                              <div style={{ fontSize: '0.7rem', fontWeight: '800', textTransform: 'uppercase', color: '#f87171', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.3rem', letterSpacing: '0.05em' }}>
+                                <RiYoutubeLine /> YouTube Resources
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                                {phase.resources.youtube.map((vid, vi) => (
+                                  <a
+                                    key={vi}
+                                    href={vid.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                      display: 'flex', alignItems: 'center', gap: '0.5rem',
+                                      padding: '0.55rem 0.8rem',
+                                      background: 'rgba(248,113,113,0.05)',
+                                      border: '1px solid rgba(248,113,113,0.18)',
+                                      textDecoration: 'none',
+                                      transition: 'all 0.15s',
+                                      borderRadius: '2px'
+                                    }}
+                                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(248,113,113,0.12)'; e.currentTarget.style.borderColor = 'rgba(248,113,113,0.35)'; }}
+                                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(248,113,113,0.05)'; e.currentTarget.style.borderColor = 'rgba(248,113,113,0.18)'; }}
+                                  >
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                      <p style={{ fontSize: '0.8rem', color: '#f87171', fontWeight: '700', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{vid.title}</p>
+                                      <p style={{ fontSize: '0.65rem', color: '#94a3b8', margin: '0.1rem 0 0 0', fontWeight: '600' }}>{vid.channel}</p>
+                                    </div>
+                                    <RiExternalLinkLine style={{ color: '#f87171', fontSize: '0.85rem', flexShrink: 0 }} />
+                                  </a>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Study Materials */}
+                          {phase.resources.studyMaterials?.length > 0 && (
+                            <div>
+                              <div style={{ fontSize: '0.7rem', fontWeight: '800', textTransform: 'uppercase', color: '#38bdf8', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.3rem', letterSpacing: '0.05em' }}>
+                                <RiBook2Line /> Study Materials
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                                {phase.resources.studyMaterials.map((mat, mi) => (
+                                  <a
+                                    key={mi}
+                                    href={mat.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                      display: 'flex', alignItems: 'center', gap: '0.5rem',
+                                      padding: '0.55rem 0.8rem',
+                                      background: 'rgba(56,189,248,0.05)',
+                                      border: '1px solid rgba(56,189,248,0.18)',
+                                      textDecoration: 'none',
+                                      transition: 'all 0.15s',
+                                      borderRadius: '2px'
+                                    }}
+                                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(56,189,248,0.12)'; e.currentTarget.style.borderColor = 'rgba(56,189,248,0.35)'; }}
+                                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(56,189,248,0.05)'; e.currentTarget.style.borderColor = 'rgba(56,189,248,0.18)'; }}
+                                  >
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                      <p style={{ fontSize: '0.8rem', color: '#38bdf8', fontWeight: '700', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{mat.title}</p>
+                                      <p style={{ fontSize: '0.65rem', color: '#94a3b8', margin: '0.1rem 0 0 0', fontWeight: '600' }}>{mat.type}</p>
+                                    </div>
+                                    <RiExternalLinkLine style={{ color: '#38bdf8', fontSize: '0.85rem', flexShrink: 0 }} />
+                                  </a>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
