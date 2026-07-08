@@ -4,6 +4,7 @@ import {
   RiGithubLine, RiStarLine, RiGitForkLine, RiRefreshLine,
   RiExternalLinkLine, RiCodeSSlashLine, RiTimeLine,
 } from 'react-icons/ri';
+import { useAuth } from '../context/AuthContext';
 
 const GITHUB_API = 'https://api.github.com';
 
@@ -21,6 +22,7 @@ function formatDate(iso) {
 }
 
 export default function GithubRepos({ username }) {
+  const { profile, updateProfile } = useAuth();
   const [repos, setRepos] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -43,11 +45,17 @@ export default function GithubRepos({ username }) {
         if (userData.message) throw new Error(userData.message === 'Not Found' ? 'GitHub user not found.' : userData.message);
         if (!Array.isArray(reposData)) throw new Error('Failed to load repositories.');
         setUser(userData);
-        setRepos(reposData.filter(r => !r.fork).sort((a, b) => b.stargazers_count - a.stargazers_count));
+        const filteredRepos = reposData.filter(r => !r.fork).sort((a, b) => b.stargazers_count - a.stargazers_count);
+        setRepos(filteredRepos);
+
+        const repoCount = userData.public_repos || 0;
+        if (profile && profile.githubRepos !== repoCount) {
+          updateProfile({ githubRepos: repoCount });
+        }
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
-  }, [username, refreshKey]);
+  }, [username, refreshKey, profile?.githubRepos]);
 
   // ── Loading ──────────────────────────────────────────────────────────────────
   if (loading) {

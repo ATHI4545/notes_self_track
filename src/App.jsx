@@ -19,6 +19,7 @@ const Settings  = lazy(() => import('./pages/Settings'));
 const Certificates = lazy(() => import('./pages/Certificates'));
 const Platforms = lazy(() => import('./pages/Platforms'));
 const ProgrammingSheet = lazy(() => import('./pages/ProgrammingSheet'));
+const Leaderboard = lazy(() => import('./pages/Leaderboard'));
 
 // ── Minimal full-screen loading fallback ──────────────────────────────────────
 function PageLoader() {
@@ -64,6 +65,7 @@ export default function App() {
                 <Route path="/certificates" element={<Certificates />} />
                 <Route path="/platforms"    element={<Platforms />} />
                 <Route path="/programming-sheet" element={<ProgrammingSheet />} />
+                <Route path="/leaderboard"  element={<Leaderboard />} />
               </Route>
 
               {/* Default redirect */}

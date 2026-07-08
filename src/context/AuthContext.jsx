@@ -40,6 +40,10 @@ const DEFAULT_EXTENDED = {
   leetcodeUsername: '',
   githubUsername:   '',
   linkedinUrl:      '',
+  activeDaysCount:  1,
+  lastActiveDate:   '',
+  leetcodeSolved:   0,
+  githubRepos:      0,
 };
 
 export function AuthProvider({ children }) {
@@ -66,9 +70,12 @@ export function AuthProvider({ children }) {
     try {
       const ref  = doc(db, 'users', uid);
       const snap = await getDoc(ref);
+      const today = new Date().toISOString().split('T')[0];
+
+      let profileData = { ...DEFAULT_EXTENDED };
       if (snap.exists()) {
         const data = snap.data();
-        setExtProfile({
+        profileData = {
           profileImageUrl: data.profileImageUrl || '',
           resumeUrl:       data.resumeUrl       || '',
           portfolioUrl:    data.portfolioUrl    || '',
@@ -78,8 +85,37 @@ export function AuthProvider({ children }) {
           leetcodeUsername: data.leetcodeUsername || '',
           githubUsername:   data.githubUsername   || '',
           linkedinUrl:      data.linkedinUrl      || '',
-        });
+          activeDaysCount: data.activeDaysCount   || 1,
+          lastActiveDate:  data.lastActiveDate    || '',
+          leetcodeSolved:  data.leetcodeSolved    || 0,
+          githubRepos:     data.githubRepos       || 0,
+        };
+
+        // Track website active days
+        if (profileData.lastActiveDate !== today) {
+          profileData.activeDaysCount = (data.activeDaysCount || 0) + 1;
+          profileData.lastActiveDate = today;
+          await setDoc(ref, {
+            activeDaysCount: profileData.activeDaysCount,
+            lastActiveDate: today,
+            updatedAt: new Date().toISOString(),
+          }, { merge: true });
+        }
+      } else {
+        profileData = {
+          ...DEFAULT_EXTENDED,
+          activeDaysCount: 1,
+          lastActiveDate: today,
+        };
+        await setDoc(ref, {
+          activeDaysCount: 1,
+          lastActiveDate: today,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }, { merge: true });
       }
+
+      setExtProfile(profileData);
     } catch (err) {
       console.error('Failed to fetch extended profile:', err);
     }
@@ -103,6 +139,10 @@ export function AuthProvider({ children }) {
         leetcodeUsername: extProfile.leetcodeUsername,
         githubUsername:   extProfile.githubUsername,
         linkedinUrl:      extProfile.linkedinUrl,
+        activeDaysCount:  extProfile.activeDaysCount,
+        lastActiveDate:   extProfile.lastActiveDate,
+        leetcodeSolved:   extProfile.leetcodeSolved,
+        githubRepos:      extProfile.githubRepos,
       }
     : {
         name: '', email: '', avatar: '🧑‍💻', uid: null, joinedDate: null,
@@ -202,7 +242,11 @@ export function AuthProvider({ children }) {
 
     // 2. Write extended fields to Firestore
     const firestorePatch = {};
-    const extFields = ['profileImageUrl', 'resumeUrl', 'portfolioUrl', 'cgpa', 'course', 'dob', 'leetcodeUsername', 'githubUsername', 'linkedinUrl'];
+    const extFields = [
+      'profileImageUrl', 'resumeUrl', 'portfolioUrl', 'cgpa', 'course', 'dob',
+      'leetcodeUsername', 'githubUsername', 'linkedinUrl',
+      'activeDaysCount', 'lastActiveDate', 'leetcodeSolved', 'githubRepos'
+    ];
     extFields.forEach(key => {
       if (updates[key] !== undefined) {
         firestorePatch[key] = updates[key]; // base64 compressed images are allowed (~20-50 KB)

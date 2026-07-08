@@ -72,7 +72,7 @@ async function fetchCalendar(username) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function CodingStats() {
-  const { profile } = useAuth();
+  const { profile, updateProfile } = useAuth();
   const username = profile?.leetcodeUsername;
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -105,12 +105,13 @@ export default function CodingStats() {
         ]);
 
         const badges = badgesData?.badges || [];
+        const solvedCount = profileData.totalSolved || 0;
 
         setData({
           username,
           ranking: profileData.ranking || 'N/A',
           solved: {
-            total: profileData.totalSolved || 0,
+            total: solvedCount,
             totalQuestions: profileData.totalQuestions || 0,
             easy: profileData.easySolved || 0,
             totalEasy: profileData.totalEasy || 0,
@@ -123,6 +124,11 @@ export default function CodingStats() {
           streak: calendarData?.streak || 0,
           activeDays: calendarData?.totalActiveDays || 0,
         });
+
+        // Sync to Firestore for Leaderboard caching
+        if (profile && profile.leetcodeSolved !== solvedCount) {
+          updateProfile({ leetcodeSolved: solvedCount });
+        }
       } catch (err) {
         console.error('LeetCode fetch error:', err);
         setError(err.message || 'Failed to fetch LeetCode data.');
@@ -135,7 +141,7 @@ export default function CodingStats() {
 
     fetchData();
     return () => clearTimeout(warmTimer);
-  }, [username, refreshKey]);
+  }, [username, refreshKey, profile?.leetcodeSolved]);
 
   // ── No username linked ────────────────────────────────────────────────────
   if (!username) {
