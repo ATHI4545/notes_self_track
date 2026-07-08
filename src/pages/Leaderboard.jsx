@@ -8,14 +8,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { useAuth } from '../context/AuthContext';
 
-// Beautiful, curated mock users to populate the leaderboard
-const MOCK_USERS = [
-  { uid: 'mock-1', name: 'Sophia Chen', avatar: '👩‍💼', leetcodeSolved: 342, githubRepos: 18, activeDaysCount: 42 },
-  { uid: 'mock-2', name: 'Alex Rivers', avatar: '🧑‍💻', leetcodeSolved: 285, githubRepos: 24, activeDaysCount: 36 },
-  { uid: 'mock-3', name: 'Marcus Miller', avatar: '🧙', leetcodeSolved: 210, githubRepos: 12, activeDaysCount: 28 },
-  { uid: 'mock-4', name: 'Elena Rostova', avatar: '🦸', leetcodeSolved: 145, githubRepos: 8, activeDaysCount: 50 },
-  { uid: 'mock-5', name: 'Amit Patel', avatar: '🧑‍🔬', leetcodeSolved: 98, githubRepos: 32, activeDaysCount: 15 },
-];
+// Leaderboard fetches real users from Firestore.
 
 export default function Leaderboard() {
   const { profile } = useAuth();
@@ -62,18 +55,8 @@ export default function Leaderboard() {
     return (u.leetcodeSolved || 0) * 10 + (u.githubRepos || 0) * 5 + (u.activeDaysCount || 1) * 2;
   };
 
-  // Combine real and mock users (avoid duplicates of current user name in mock data)
+  // List of all registered users from Firestore
   const allUsers = [...dbUsers];
-  
-  // Add mock users that don't match the current user name
-  MOCK_USERS.forEach((mock) => {
-    const nameExists = allUsers.some(
-      (u) => u.name.toLowerCase() === mock.name.toLowerCase() || u.uid === mock.uid
-    );
-    if (!nameExists) {
-      allUsers.push(mock);
-    }
-  });
 
   // Ensure current user is in the list
   const currentUserExists = allUsers.some((u) => u.uid === profile.uid);
