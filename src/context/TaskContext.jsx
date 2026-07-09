@@ -11,7 +11,7 @@ import { generateId, calculateStreak, recordStreakDay } from '../utils/helpers';
 const TaskContext = createContext(null);
 
 const DEFAULT_CATEGORIES = ['Personal', 'Work', 'Study', 'Health', 'Shopping', 'Finance'];
-const DEFAULT_SETTINGS   = { notifications: true };
+const DEFAULT_SETTINGS = { notifications: true };
 
 // ── localStorage helpers (only for dark mode preference — stays local) ────────
 function readLS(key, fallback) {
@@ -19,7 +19,7 @@ function readLS(key, fallback) {
   catch { return fallback; }
 }
 function writeLS(key, val) {
-  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch { }
 }
 
 export function TaskProvider({ children }) {
@@ -29,27 +29,26 @@ export function TaskProvider({ children }) {
   // ── Firestore paths ───────────────────────────────────────────────────────
   // users/{uid}            → user meta doc (categories, settings, completedDates)
   // users/{uid}/tasks/{id} → individual task docs
-  const userDocRef   = uid ? doc(db, 'users', uid) : null;
-  const tasksColRef  = uid ? collection(db, 'users', uid, 'tasks') : null;
+  const userDocRef = uid ? doc(db, 'users', uid) : null;
+  const tasksColRef = uid ? collection(db, 'users', uid, 'tasks') : null;
 
   // ── State ─────────────────────────────────────────────────────────────────
-  const [tasks,          setTasks]          = useState([]);
-  const [categories,     setCategories]     = useState(DEFAULT_CATEGORIES);
+  const [tasks, setTasks] = useState([]);
+  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
   const [completedDates, setCompletedDates] = useState([]);
-  const [settings,       setSettings]       = useState(DEFAULT_SETTINGS);
-  const [darkMode,       setDarkMode]       = useState(() => readLS('df_dark_mode', false));
-  const [loading,        setLoading]        = useState(true);
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [darkMode, setDarkMode] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Keep ref to unsubscribe functions so we can clean them up
   const unsubTasksRef = useRef(null);
 
   // ── Apply dark mode to <html> ─────────────────────────────────────────────
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-    writeLS('df_dark_mode', darkMode);
-  }, [darkMode]);
+    document.documentElement.classList.remove('dark');
+  }, []);
 
-  const applyDarkMode = useCallback((val) => setDarkMode(val), []);
+  const applyDarkMode = useCallback(() => {}, []);
 
   // ── Load user meta (categories, settings, completedDates) from Firestore ──
   const loadUserMeta = useCallback(async (userRef) => {
@@ -57,16 +56,16 @@ export function TaskProvider({ children }) {
       const snap = await getDoc(userRef);
       if (snap.exists()) {
         const data = snap.data();
-        if (data.categories)     setCategories(data.categories);
-        if (data.settings)       setSettings(data.settings);
+        if (data.categories) setCategories(data.categories);
+        if (data.settings) setSettings(data.settings);
         if (data.completedDates) setCompletedDates(data.completedDates);
       } else {
         // First time — create the user meta doc with defaults
         await setDoc(userRef, {
-          categories:     DEFAULT_CATEGORIES,
-          settings:       DEFAULT_SETTINGS,
+          categories: DEFAULT_CATEGORIES,
+          settings: DEFAULT_SETTINGS,
           completedDates: [],
-          createdAt:      serverTimestamp(),
+          createdAt: serverTimestamp(),
         });
       }
     } catch (err) {
@@ -115,7 +114,7 @@ export function TaskProvider({ children }) {
     return () => {
       if (unsubTasksRef.current) unsubTasksRef.current();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uid]);
 
   // ── Helper: persist user meta fields back to Firestore ────────────────────
@@ -130,10 +129,10 @@ export function TaskProvider({ children }) {
   const addTask = useCallback(async (taskData) => {
     if (!tasksColRef) return;
     const newTask = {
-      completed:   false,
-      archived:    false,
+      completed: false,
+      archived: false,
       completedAt: null,
-      createdAt:   serverTimestamp(),
+      createdAt: serverTimestamp(),
       ...taskData,
     };
     try {
@@ -178,7 +177,7 @@ export function TaskProvider({ children }) {
 
     const completing = !task.completed;
     const updates = completing
-      ? { completed: true,  completedAt: new Date().toISOString() }
+      ? { completed: true, completedAt: new Date().toISOString() }
       : { completed: false, completedAt: null };
 
     try {

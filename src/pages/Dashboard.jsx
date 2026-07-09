@@ -34,8 +34,8 @@ function LiveClock() {
 export default function Dashboard() {
   const { profile } = useAuth();
   const { tasks, streak } = useTask();
-  const [showForm, setShowForm]   = useState(false);
-  const [editTask, setEditTask]   = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [editTask, setEditTask] = useState(null);
 
   const navigate = useNavigate();
   const [roadmaps, setRoadmaps] = useState([]);
@@ -43,24 +43,24 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!profile?.uid) return;
-    
+
     const q = query(collection(db, 'users', profile.uid, 'roadmaps'), orderBy('createdAt', 'desc'));
     const unsub = onSnapshot(q, (snapshot) => {
       const dbDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      
+
       let localDocs = [];
       try {
         localDocs = JSON.parse(localStorage.getItem('self_track_local_roadmaps') || '[]');
       } catch (err) {
         console.error(err);
       }
-      
+
       const merged = [...dbDocs, ...localDocs].sort((a, b) => {
         const timeA = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : new Date(a.createdAt).getTime();
         const timeB = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : new Date(b.createdAt).getTime();
         return (timeB || 0) - (timeA || 0);
       });
-      
+
       setRoadmaps(merged);
       setLoadingRoadmaps(false);
     }, (err) => {
@@ -126,7 +126,7 @@ export default function Dashboard() {
     coursesCompleted: completedRoadmapsCount
   };
   const todayTasks = tasks.filter(t => isTodayTask(t) && !t.archived).slice(0, 6);
-  const quote      = getDailyQuote();
+  const quote = getDailyQuote();
 
   return (
     <div className="page-container animate-fade-in db-content" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -259,7 +259,7 @@ export default function Dashboard() {
                       <RiDeleteBin6Line />
                     </button>
                   </div>
-                  
+
                   <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.6rem', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '0.68rem', fontWeight: '700', background: 'rgba(56,189,248,0.1)', color: '#38bdf8', padding: '0.1rem 0.4rem' }}>
                       {rm.level}
@@ -342,12 +342,12 @@ export default function Dashboard() {
           inset: 0;
           z-index: 0;
           pointer-events: none;
-          /* Deep space gradient */
+          /* Warm Obsidian & Amber Sunset gradient */
           background:
-            radial-gradient(ellipse at 20% 10%, rgba(99,102,241,0.18) 0%, transparent 55%),
-            radial-gradient(ellipse at 80% 80%, rgba(139,92,246,0.15) 0%, transparent 55%),
-            radial-gradient(ellipse at 50% 50%, rgba(14,165,233,0.07) 0%, transparent 70%),
-            linear-gradient(160deg, #0f0c29 0%, #141230 45%, #1a0a2e 100%);
+            radial-gradient(ellipse at 20% 10%, rgba(249, 115, 22, 0.12) 0%, transparent 55%),
+            radial-gradient(ellipse at 80% 80%, rgba(245, 158, 11, 0.08) 0%, transparent 55%),
+            radial-gradient(ellipse at 50% 50%, rgba(234, 88, 12, 0.06) 0%, transparent 70%),
+            linear-gradient(160deg, #0d0a08 0%, #17110c 45%, #2c1a0e 100%);
         }
         /* Light mode override */
         html:not(.dark) .db-bg-layer {

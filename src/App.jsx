@@ -6,17 +6,16 @@ import { AuthProvider } from './context/AuthContext';
 import { TaskProvider } from './context/TaskContext';
 import ProtectedLayout from './components/ProtectedLayout';
 import ChatBot from './components/ChatBot';
-import CustomCursor from './components/CustomCursor';
 
 // ── Lazy-loaded pages (each becomes its own chunk for code splitting) ─────────
-const Login     = lazy(() => import('./pages/Login'));
-const Signup    = lazy(() => import('./pages/Signup'));
+const Login = lazy(() => import('./pages/Login'));
+const Signup = lazy(() => import('./pages/Signup'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Tasks     = lazy(() => import('./pages/Tasks'));
-const Roadmap   = lazy(() => import('./pages/Roadmap'));
+const Tasks = lazy(() => import('./pages/Tasks'));
+const Roadmap = lazy(() => import('./pages/Roadmap'));
 const Analytics = lazy(() => import('./pages/Analytics'));
-const Profile   = lazy(() => import('./pages/Profile'));
-const Settings  = lazy(() => import('./pages/Settings'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Settings = lazy(() => import('./pages/Settings'));
 const Certificates = lazy(() => import('./pages/Certificates'));
 const Platforms = lazy(() => import('./pages/Platforms'));
 const ProgrammingSheet = lazy(() => import('./pages/ProgrammingSheet'));
@@ -53,22 +52,22 @@ export default function App() {
           <Suspense fallback={<PageLoader />}>
             <Routes>
               {/* Public */}
-              <Route path="/login"  element={<Login />} />
+              <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
 
               {/* Protected */}
               <Route element={<ProtectedLayout />}>
-                <Route path="/dashboard"  element={<Dashboard />} />
-                <Route path="/tasks"      element={<Tasks />} />
-                <Route path="/roadmap"    element={<Roadmap />} />
-                <Route path="/analytics"  element={<Analytics />} />
-                <Route path="/profile"    element={<Profile />} />
-                <Route path="/settings"   element={<Settings />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/tasks" element={<Tasks />} />
+                <Route path="/roadmap" element={<Roadmap />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/settings" element={<Settings />} />
                 <Route path="/certificates" element={<Certificates />} />
-                <Route path="/platforms"    element={<Platforms />} />
+                <Route path="/platforms" element={<Platforms />} />
                 <Route path="/programming-sheet" element={<ProgrammingSheet />} />
-                <Route path="/leaderboard"  element={<Leaderboard />} />
-                <Route path="/resources"     element={<Resources />} />
+                <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/resources" element={<Resources />} />
               </Route>
 
               {/* Default redirect */}
@@ -89,7 +88,6 @@ export default function App() {
           toastStyle={{ borderRadius: '12px', fontFamily: 'Inter, sans-serif' }}
         />
         <ChatBot />
-        <CustomCursor />
       </TaskProvider>
     </AuthProvider>
   );

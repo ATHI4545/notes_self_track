@@ -9,7 +9,7 @@ function ParticleCanvas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    let w = canvas.width  = window.innerWidth;
+    let w = canvas.width = window.innerWidth;
     let h = canvas.height = window.innerHeight;
 
     const particles = Array.from({ length: 45 }, () => ({
@@ -40,7 +40,7 @@ function ParticleCanvas() {
 
     const resize = () => {
       if (!canvas) return;
-      w = canvas.width  = window.innerWidth;
+      w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
     };
     window.addEventListener('resize', resize);
@@ -76,19 +76,28 @@ export default function ProtectedLayout() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)',
+        background: 'linear-gradient(135deg, #0d0a08 0%, #17110c 50%, #2c1a0e 100%)',
         flexDirection: 'column',
         gap: '1.25rem',
       }}>
         {/* ARS SmartTrack logo */}
         <div style={{
           width: '56px', height: '56px', borderRadius: '16px',
-          background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+          background: '#fff',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '1.6rem', fontWeight: '900', color: '#fff',
-          boxShadow: '0 8px 32px rgba(99,102,241,0.5)',
+          boxShadow: '0 8px 32px rgba(99,102,241,0.3)',
+          overflow: 'hidden',
+          padding: '4px',
         }}>
-          A
+          <img
+            src="/Logo.png"
+            alt="Logo"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+            }}
+          />
         </div>
 
         {/* Spinner */}

@@ -12,17 +12,17 @@ import { useAuth } from '../context/AuthContext';
 import { useTask } from '../context/TaskContext';
 
 const NAV_ITEMS = [
-  { to: '/dashboard',    icon: RiDashboardLine,  label: 'Dashboard'    },
-  { to: '/tasks',        icon: RiTaskLine,       label: 'Tasks'        },
-  { to: '/roadmap',      icon: RiCompass3Line,   label: 'Roadmap AI'   },
-  { to: '/analytics',    icon: RiBarChartLine,   label: 'Analytics'    },
-  { to: '/certificates', icon: RiAwardLine,     label: 'Certificates' },
-  { to: '/platforms',    icon: RiCodeSSlashLine, label: 'Platforms'    },
-  { to: '/leaderboard',  icon: RiTrophyLine,     label: 'Leaderboard'  },
-  { to: '/resources',    icon: RiBookOpenLine,   label: 'Resources'    },
-  { to: '/programming-sheet', icon: RiFileList3Line, label: 'Prog. Sheet'  },
-  { to: '/profile',      icon: RiUserLine,        label: 'Profile'      },
-  { to: '/settings',     icon: RiSettings4Line,   label: 'Settings'     },
+  { to: '/dashboard', icon: RiDashboardLine, label: 'Dashboard' },
+  { to: '/tasks', icon: RiTaskLine, label: 'Tasks' },
+  { to: '/roadmap', icon: RiCompass3Line, label: 'Roadmap AI' },
+  { to: '/analytics', icon: RiBarChartLine, label: 'Analytics' },
+  { to: '/certificates', icon: RiAwardLine, label: 'Certificates' },
+  { to: '/platforms', icon: RiCodeSSlashLine, label: 'Platforms' },
+  { to: '/leaderboard', icon: RiTrophyLine, label: 'Leaderboard' },
+  { to: '/resources', icon: RiBookOpenLine, label: 'Resources' },
+  { to: '/programming-sheet', icon: RiFileList3Line, label: 'Prog. Sheet' },
+  { to: '/profile', icon: RiUserLine, label: 'Profile' },
+  { to: '/settings', icon: RiSettings4Line, label: 'Settings' },
 ];
 
 const navLinkBase = {
@@ -67,12 +67,21 @@ function SidebarContent({ onClose }) {
       }}>
         <div style={{
           width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0,
-          background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+          background: '#fff',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: '#fff', fontWeight: '900', fontSize: '1.1rem',
-          boxShadow: '0 4px 14px rgba(99,102,241,0.4)',
+          boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
+          overflow: 'hidden',
+          padding: '2px',
         }}>
-          A
+          <img
+            src="/Logo.png"
+            alt="Logo"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+            }}
+          />
         </div>
         <span className="text-gradient" style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.02em' }}>
           ARS SmartTrack

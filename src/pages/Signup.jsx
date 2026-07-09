@@ -45,14 +45,23 @@ export default function Signup() {
             transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
             style={{
               width: '64px', height: '64px', borderRadius: '18px',
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+              background: '#fff',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 1.25rem',
-              boxShadow: '0 8px 32px rgba(99,102,241,0.5)',
-              fontSize: '1.75rem', fontWeight: '900', color: '#fff',
+              boxShadow: '0 8px 32px rgba(99,102,241,0.3)',
+              overflow: 'hidden',
+              padding: '4px',
             }}
           >
-            A
+            <img
+              src="/Logo.png"
+              alt="Logo"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+              }}
+            />
           </motion.div>
           <h1 style={{ fontSize: '1.875rem', fontWeight: '800', color: '#f1f5f9', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
             Create account
