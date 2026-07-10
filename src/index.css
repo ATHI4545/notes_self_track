@@ -25,6 +25,10 @@
   /* menu items, small elements     */
   --radius-xs: 0.5rem;
   /* inline badges                  */
+  
+  --text-muted: #64748b;
+  --btn-active-bg: #ffffff;
+  --btn-active-color: #6366f1;
 }
 
 /* ── Base reset ─────────────────────────────────────────────── */
@@ -44,6 +48,9 @@ html {
 
 html.dark {
   color-scheme: dark;
+  --text-muted: #94a3b8;
+  --btn-active-bg: rgba(255, 255, 255, 0.1);
+  --btn-active-color: #c4b5fd;
 }
 
 body {
@@ -73,8 +80,13 @@ html:not(.dark) body {
 }
 
 html.dark body {
-  background-color: #fdfcfb;
-  color: #1e293b;
+  background-color: #0a0614;
+  background-image:
+    radial-gradient(ellipse at 15% 10%, rgba(124, 58, 237, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+    linear-gradient(135deg, #0a0614 0%, #130d25 50%, #1a0a2e 100%);
+  background-attachment: fixed;
+  color: #f1f5f9;
 }
 
 /* ── Scrollbar ──────────────────────────────────────────────── */
@@ -119,6 +131,41 @@ html:not(.dark) .glass-card {
   box-shadow: 0 4px 24px rgba(245, 158, 11, 0.08), 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
+/* ── Podium Section styles ──────────────────────────────────── */
+.podium-section {
+  background: linear-gradient(135deg, #f8faff 0%, #eef2ff 50%, #faf5ff 100%);
+  border-radius: 20px;
+  border: 1px solid rgba(99,102,241,0.1);
+  padding: 2rem 1rem 0;
+  box-shadow: 0 4px 24px rgba(99,102,241,0.06);
+}
+
+html.dark .podium-section {
+  background: linear-gradient(135deg, rgba(15, 10, 30, 0.6) 0%, rgba(20, 15, 45, 0.5) 100%);
+  border-color: rgba(139, 92, 246, 0.15);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.podium-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+html.dark .podium-card {
+  background: rgba(15, 10, 30, 0.75);
+}
+
+.podium-card-self {
+  background: rgba(99, 102, 241, 0.07);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+html.dark .podium-card-self {
+  background: rgba(99, 102, 241, 0.18);
+}
+
 /* ── Dark glass card (auth) ─────────────────────────────────── */
 .glass-dark {
   background: rgba(8, 6, 22, 0.65);
@@ -139,6 +186,43 @@ html:not(.dark) .glass-card {
   background: linear-gradient(135deg, #ffffff 0%, #faf8f5 50%, #f5eee4 100%);
   position: relative;
   overflow: hidden;
+}
+
+html.dark .auth-page {
+  background: linear-gradient(135deg, #0a0614 0%, #130d25 50%, #1a0a2e 100%);
+}
+
+html.dark .auth-page::before {
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+}
+
+html.dark .auth-page::after {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%);
+}
+
+.auth-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  transition: color 0.3s ease;
+}
+
+html.dark .auth-title {
+  color: #f1f5f9;
+}
+
+.auth-subtitle {
+  color: #475569;
+  margin-top: 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+html.dark .auth-subtitle {
+  color: #94a3b8;
 }
 
 .auth-page::before,

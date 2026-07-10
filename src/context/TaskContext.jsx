@@ -45,10 +45,24 @@ export function TaskProvider({ children }) {
 
   // ── Apply dark mode to <html> ─────────────────────────────────────────────
   useEffect(() => {
-    document.documentElement.classList.remove('dark');
+    const saved = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(saved);
+    if (saved) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }, []);
 
-  const applyDarkMode = useCallback(() => {}, []);
+  const applyDarkMode = useCallback((val) => {
+    setDarkMode(val);
+    localStorage.setItem('darkMode', val ? 'true' : 'false');
+    if (val) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
 
   // ── Load user meta (categories, settings, completedDates) from Firestore ──
   const loadUserMeta = useCallback(async (userRef) => {

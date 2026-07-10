@@ -6,7 +6,7 @@ import {
   RiTimerLine, RiUserLine, RiSettings4Line, RiMenuLine,
   RiCloseLine, RiMoonLine, RiSunLine, RiLogoutBoxLine,
   RiAwardLine, RiCodeSSlashLine, RiFileList3Line,
-  RiTrophyLine, RiBookOpenLine,
+  RiTrophyLine, RiBookOpenLine, RiTeamLine,
 } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 import { useTask } from '../context/TaskContext';
@@ -21,6 +21,7 @@ const NAV_ITEMS = [
   { to: '/leaderboard', icon: RiTrophyLine, label: 'Leaderboard' },
   { to: '/resources', icon: RiBookOpenLine, label: 'Resources' },
   { to: '/programming-sheet', icon: RiFileList3Line, label: 'Prog. Sheet' },
+  { to: '/mentor-connect', icon: RiTeamLine, label: 'Mentor Connect' },
   { to: '/profile', icon: RiUserLine, label: 'Profile' },
   { to: '/settings', icon: RiSettings4Line, label: 'Settings' },
 ];

@@ -62,10 +62,10 @@ export default function Login() {
               }}
             />
           </motion.div>
-          <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#f1f5f9', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
+          <h1 className="auth-title">
             Welcome back
           </h1>
-          <p style={{ color: '#94a3b8', marginTop: '0.4rem', fontSize: '0.95rem' }}>
+          <p className="auth-subtitle">
             Sign in to your ARS SmartTrack account
           </p>
         </div>

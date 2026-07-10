@@ -63,10 +63,10 @@ export default function Signup() {
               }}
             />
           </motion.div>
-          <h1 style={{ fontSize: '1.875rem', fontWeight: '800', color: '#f1f5f9', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
+          <h1 className="auth-title" style={{ fontSize: '1.875rem' }}>
             Create account
           </h1>
-          <p style={{ color: '#94a3b8', marginTop: '0.4rem', fontSize: '0.95rem' }}>
+          <p className="auth-subtitle">
             Start organizing your life with ARS SmartTrack
           </p>
         </div>

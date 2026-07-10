@@ -260,8 +260,8 @@ export default function Leaderboard() {
 
       {/* ── Podium Section ── */}
       {displayPodium.length > 0 && (
-        <div style={{ background: 'linear-gradient(135deg, #f8faff 0%, #eef2ff 50%, #faf5ff 100%)', borderRadius: '20px', border: '1px solid rgba(99,102,241,0.1)', padding: '2rem 1rem 0', boxShadow: '0 4px 24px rgba(99,102,241,0.06)' }}>
-          <p style={{ textAlign: 'center', fontWeight: 700, fontSize: '0.82rem', color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '1.5rem', margin: '0 0 1.5rem' }}>
+        <div className="podium-section">
+          <p style={{ textAlign: 'center', fontWeight: 700, fontSize: '0.82rem', color: 'var(--text-muted, #94a3b8)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '1.5rem', margin: '0 0 1.5rem' }}>
             🏆 Top Performers
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '1.25rem', flexWrap: 'wrap' }}>
@@ -294,11 +294,9 @@ export default function Leaderboard() {
                   </div>
 
                   {/* Name + Stats Card */}
-                  <div style={{
+                  <div className={isSelf ? "podium-card-self" : "podium-card"} style={{
                     width: '100%', padding: '0.875rem 0.75rem', textAlign: 'center',
-                    background: isSelf ? 'rgba(99,102,241,0.07)' : 'rgba(255,255,255,0.85)',
-                    backdropFilter: 'blur(8px)',
-                    border: `1.5px solid ${isSelf ? 'rgba(99,102,241,0.35)' : cfg.color + '44'}`,
+                    border: `1.5px solid ${isSelf ? 'rgba(99,102,241,0.45)' : cfg.color + '44'}`,
                     borderRadius: '14px', marginBottom: '0',
                     boxShadow: `0 8px 24px ${cfg.shadow}`,
                   }}>
@@ -358,8 +356,8 @@ export default function Leaderboard() {
                 style={{
                   padding: '0.4rem 0.875rem', borderRadius: '8px', border: 'none',
                   fontSize: '0.78rem', fontWeight: activeTab === tab.key ? 700 : 500,
-                  background: activeTab === tab.key ? '#fff' : 'transparent',
-                  color: activeTab === tab.key ? '#6366f1' : '#64748b',
+                  background: activeTab === tab.key ? 'var(--btn-active-bg, #fff)' : 'transparent',
+                  color: activeTab === tab.key ? 'var(--btn-active-color, #6366f1)' : 'var(--text-muted, #64748b)',
                   boxShadow: activeTab === tab.key ? '0 1px 5px rgba(0,0,0,0.07)' : 'none',
                   cursor: 'pointer', transition: 'all 0.15s',
                 }}
@@ -472,7 +470,7 @@ export default function Leaderboard() {
                             />
                             <div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                                <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 700, color: isSelf ? '#4f46e5' : '#1e293b' }}>
+                                <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 700, color: isSelf ? '#6366f1' : 'inherit' }}>
                                   {user.name}
                                 </p>
                                 {isSelf && (
